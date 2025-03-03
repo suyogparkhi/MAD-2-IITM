@@ -5,6 +5,11 @@ import store from '../store'
 // Layouts
 import DefaultLayout from '../layouts/DefaultLayout.vue'
 import AuthLayout from '../layouts/AuthLayout.vue'
+import LandingLayout from '../layouts/LandingLayout.vue'
+
+// Home view
+import Home from '../views/Home.vue'
+import TestHome from '../views/TestHome.vue'
 
 // Auth views
 import Login from '../views/auth/Login.vue'
@@ -38,7 +43,7 @@ Vue.use(VueRouter)
 const authGuard = (to, from, next) => {
   const isAuthenticated = store.getters['auth/isAuthenticated']
   if (!isAuthenticated) {
-    next('/login')
+    next('/auth/login')
   } else {
     next()
   }
@@ -77,15 +82,24 @@ const PlaceholderComponent = {
 }
 
 const routes = [
-  // Auth routes
+  // Landing page route
   {
     path: '/',
-    component: AuthLayout,
+    component: LandingLayout,
     children: [
       {
         path: '',
-        redirect: '/login'
-      },
+        name: 'Home',
+        component: Home
+      }
+    ]
+  },
+  
+  // Auth routes
+  {
+    path: '/auth',
+    component: AuthLayout,
+    children: [
       {
         path: 'login',
         name: 'Login',
@@ -104,6 +118,38 @@ const routes = [
       {
         path: 'register/customer',
         name: 'CustomerRegister',
+        component: CustomerRegister
+      }
+    ]
+  },
+  
+  // Direct routes for backward compatibility
+  {
+    path: '/login',
+    component: AuthLayout,
+    children: [
+      {
+        path: '',
+        component: Login
+      }
+    ]
+  },
+  {
+    path: '/register/professional',
+    component: AuthLayout,
+    children: [
+      {
+        path: '',
+        component: ProfessionalRegister
+      }
+    ]
+  },
+  {
+    path: '/register/customer',
+    component: AuthLayout,
+    children: [
+      {
+        path: '',
         component: CustomerRegister
       }
     ]
@@ -214,10 +260,12 @@ const routes = [
     ]
   },
   
-  // Default redirect to login
+  // Catch-all route for 404
   {
     path: '*',
-    redirect: '/login'
+    component: {
+      template: '<div class="container mt-5 text-center"><h1>404</h1><p>Page not found</p></div>'
+    }
   }
 ]
 
@@ -225,33 +273,6 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
-})
-
-// Global navigation guard
-router.beforeEach((to, from, next) => {
-  const isAuthenticated = store.getters['auth/isAuthenticated']
-  const publicPages = ['/login', '/register', '/register/professional', '/register/customer']
-  const authRequired = !publicPages.includes(to.path)
-  
-  if (authRequired && !isAuthenticated) {
-    next('/login')
-  } else {
-    // If authenticated, redirect to appropriate dashboard
-    if (isAuthenticated && to.path === '/') {
-      const userRole = store.getters['auth/userRole']
-      if (userRole === 'admin') {
-        next('/admin')
-      } else if (userRole === 'professional') {
-        next('/professional')
-      } else if (userRole === 'customer') {
-        next('/customer')
-      } else {
-        next('/login')
-      }
-    } else {
-      next()
-    }
-  }
 })
 
 export default router

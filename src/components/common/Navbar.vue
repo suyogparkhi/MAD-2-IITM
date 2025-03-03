@@ -2,22 +2,22 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
       <router-link class="navbar-brand" to="/">A-Z Household Services</router-link>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ms-auto">
           <li class="nav-item" v-if="!isAuthenticated">
-            <router-link class="nav-link" to="/login">Login</router-link>
+            <router-link class="nav-link" to="/auth/login">Login</router-link>
           </li>
           <li class="nav-item" v-if="!isAuthenticated">
-            <router-link class="nav-link" to="/register/customer">Register</router-link>
+            <router-link class="nav-link" to="/auth/register/customer">Register</router-link>
           </li>
           <li class="nav-item dropdown" v-if="isAuthenticated">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               {{ username }}
             </a>
-            <div class="dropdown-menu">
+            <div class="dropdown-menu dropdown-menu-end">
               <router-link class="dropdown-item" :to="profileLink">Profile</router-link>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="#" @click.prevent="logout">Logout</a>
@@ -59,7 +59,7 @@ export default {
     }),
     async logout() {
       await this.logoutAction();
-      this.$router.push('/login');
+      this.$router.push('/auth/login');
     }
   }
 }

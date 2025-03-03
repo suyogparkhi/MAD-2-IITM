@@ -1,26 +1,29 @@
 <template>
     <div class="default-layout">
-      <Navbar />
+      <app-navbar />
       <div class="container-fluid">
         <div class="row">
           <Sidebar v-if="showSidebar" class="col-md-3 col-lg-2 d-md-block sidebar"/>
-          <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+          <main :class="showSidebar ? 'col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4' : 'col-12 px-md-4 py-4'">
             <router-view />
           </main>
         </div>
       </div>
+      <app-footer v-if="!showSidebar" />
     </div>
   </template>
   
   <script>
-  import Navbar from '@/components/common/Navbar.vue'
+  import AppNavbar from '@/components/common/Navbar.vue'
+  import AppFooter from '@/components/common/Footer.vue'
   import Sidebar from '@/components/common/Sidebar.vue'
   import { mapGetters } from 'vuex'
   
   export default {
     name: 'DefaultLayout',
     components: {
-      Navbar,
+      AppNavbar,
+      AppFooter,
       Sidebar
     },
     computed: {
@@ -37,6 +40,16 @@
   </script>
   
   <style scoped>
+  .default-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .container-fluid {
+    flex: 1;
+  }
+  
   .sidebar {
     position: fixed;
     top: 56px; /* Navbar height */
