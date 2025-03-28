@@ -1,0 +1,5 @@
+uploads/
+instance/
+exports/
+migrations/
+.env
