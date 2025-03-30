@@ -1,0 +1,75 @@
+// Household Services Database Schema
+// Use this code at https://dbdiagram.io/
+
+Table users {
+  id integer [pk, increment]
+  username varchar [unique, not null]
+  email varchar [unique, not null]
+  password_hash varchar [not null]
+  role varchar [not null, note: 'admin, customer, professional']
+  created_at timestamp [default: `now()`]
+  is_active boolean [default: true]
+}
+
+Table services {
+  id integer [pk, increment]
+  name varchar [not null]
+  description text
+  base_price float [not null]
+  time_required integer [not null, note: 'in minutes']
+  created_at timestamp [default: `now()`]
+  is_active boolean [default: true]
+}
+
+Table professionals {
+  id integer [pk, increment]
+  user_id integer [ref: > users.id, not null]
+  service_id integer [ref: > services.id, not null]
+  experience integer
+  description text
+  verification_status varchar [default: 'pending', note: 'pending, approved, rejected']
+  documents varchar
+  address text
+  pin_code varchar
+  phone varchar
+}
+
+Table customers {
+  id integer [pk, increment]
+  user_id integer [ref: > users.id, not null]
+  address text
+  pin_code varchar
+}
+
+Table service_requests {
+  id integer [pk, increment]
+  service_id integer [ref: > services.id, not null]
+  customer_id integer [ref: > customers.id, not null]
+  professional_id integer [ref: > professionals.id, null]
+  date_of_request timestamp [default: `now()`]
+  date_of_completion timestamp [null]
+  service_status varchar [default: 'requested', note: 'requested, assigned, accepted, rejected, completed, closed']
+  remarks text
+  created_at timestamp [default: `now()`]
+}
+
+Table reviews {
+  id integer [pk, increment]
+  service_request_id integer [ref: > service_requests.id, not null]
+  rating integer [not null, note: '1-5 stars']
+  comments text
+  created_at timestamp [default: `now()`]
+}
+
+Table export_jobs {
+  id integer [pk, increment]
+  user_id integer [ref: > users.id, not null]
+  job_type varchar [not null, note: 'service_requests, professionals, etc.']
+  status varchar [default: 'pending', note: 'pending, processing, completed, failed']
+  file_path varchar
+  file_name varchar
+  filter_params text [note: 'JSON string of filter parameters']
+  error_message text
+  created_at timestamp [default: `now()`]
+  completed_at timestamp
+} 
